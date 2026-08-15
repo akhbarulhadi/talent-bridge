@@ -102,14 +102,16 @@ export default function CVUploadModal({ isOpen, onClose, onUploadSuccess }: CVUp
     
     try {
       const formData = new FormData();
-      formData.append('cv', selectedFile);
+      // PERBAIKAN 1: Ganti 'cv' menjadi 'file' agar sesuai dengan Next.js & Python API
+      formData.append('file', selectedFile); 
       
       // Simulate progress for better UX
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => Math.min(prev + 10, 90));
       }, 100);
       
-      const response = await fetch('/api/cv', {
+      // PERBAIKAN 2: Pastikan mengarah ke /api/upload-cv (bukan /api/cv)
+      const response = await fetch('/api/upload-cv', {
         method: 'POST',
         body: formData,
       });
@@ -117,11 +119,18 @@ export default function CVUploadModal({ isOpen, onClose, onUploadSuccess }: CVUp
       clearInterval(progressInterval);
       setUploadProgress(100);
       
-      const data = await response.json();
+      // PERBAIKAN 3: Parsing aman untuk mencegah "Unexpected end of JSON"
+      const rawText = await response.text();
+      let data;
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch (e) {
+        throw new Error("Server tidak mengembalikan JSON. Pastikan API route dan server Python berjalan.");
+      }
       
-      if (data.success) {
+      if (response.ok && data.success) {
         setTimeout(() => {
-          onUploadSuccess(data.cv);
+          onUploadSuccess(data.cv || data); // pass data cv yang dikembalikan
           onClose();
           resetModal();
         }, 500);
