@@ -1,0 +1,70 @@
+datasource db {
+  provider = "postgresql"
+  schemas  = ["public"]
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ──> TAMBAHKAN KEMBALI MODEL PROFILES INI <──
+model profiles {
+  id    String  @id @db.Uuid
+  email String?
+  role  String? @default("talent")
+
+  @@schema("public")
+}
+
+// Model Skenario Game Anda yang lain...
+model MstPeranSkenario {
+  id_peran_skenario    String   @id @default(uuid())
+  peran                String
+  judul_skenario       String
+  kesulitan            String   
+  estimasi_durasi      Int      
+  id_problem_statement String   @unique 
+  
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  problem_statement    MstProblemStatement @relation(fields: [id_problem_statement], references: [id_problem_statement], onDelete: Cascade)
+
+  @@map("mst_peran_skenario")
+  @@schema("public")
+}
+
+model MstProblemStatement {
+  id_problem_statement String   @id @default(uuid())
+  briefing_awal        String   @db.Text
+  
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  skenario_awal        MstPeranSkenario? 
+  decisions            MstDecision[] @relation("ProblemDecisions")
+  incoming_decisions   MstDecision[] @relation("NextProblemDecision")
+
+  @@map("mst_problem_statement")
+  @@schema("public")
+}
+
+model MstDecision {
+  id_decision               String   @id @default(uuid())
+  id_problem_statement      String
+  title                     String
+  text                      String   @db.Text
+  konsekuensi               String   @db.Text
+  status                    String   
+  skor                      Int
+  next_problem_statement_id String?  
+  
+  created_at                DateTime @default(now())
+  updated_at                DateTime @updatedAt
+
+  problem_statement         MstProblemStatement @relation("ProblemDecisions", fields: [id_problem_statement], references: [id_problem_statement], onDelete: Cascade)
+  next_problem              MstProblemStatement? @relation("NextProblemDecision", fields: [next_problem_statement_id], references: [id_problem_statement], onDelete: SetNull)
+
+  @@map("mst_decision")
+  @@schema("public")
+}
