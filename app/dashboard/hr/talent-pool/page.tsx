@@ -7,12 +7,23 @@ import { createClient } from "@/utils/supabase/client";
 import SideNavHR from "@/app/components/ui/SideNavHR";
 import MaterialIcon from "@/app/components/ui/MaterialIcon";
 
+interface Job {
+  id: string;
+  job_title: string;
+  location: string;
+  minimum_skor: number;
+  applicant: number;
+  status: string;
+  created_at: string;
+}
+
 interface Talent {
   id: string;
   email: string;
   role: string;
   job_title: string | null;
   skor: number | null;
+  following: string[] | null;
 }
 
 export default function TalentPoolPage() {
@@ -25,11 +36,20 @@ export default function TalentPoolPage() {
   const [talents, setTalents] = useState<Talent[]>([]);
   const [talentsLoading, setTalentsLoading] = useState(true);
 
+  // Follow data HR
+  const [hrFollowing, setHrFollowing] = useState<string[]>([]);
+
+  // Job matching
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [selectedJobId, setSelectedJobId] = useState<string>("");
+  const [isMatching, setIsMatching] = useState(false);
+  const [matchedTalents, setMatchedTalents] = useState<Talent[]>([]);
+
   // State untuk Modal Detail Profil
   const [selectedTalent, setSelectedTalent] = useState<Talent | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Cek Auth User & Ambil Data Talents
+  // Cek Auth User & Ambil Data
   useEffect(() => {
     const initData = async () => {
       const {
@@ -43,7 +63,19 @@ export default function TalentPoolPage() {
       setUser(user);
       setLoading(false);
 
+      // Fetch HR profile following/followed
+      const { data: hrProfile } = await supabase
+        .from("profiles")
+        .select("following")
+        .eq("id", user.id)
+        .single();
+
+      if (hrProfile) {
+        setHrFollowing((hrProfile.following as string[]) || []);
+      }
+
       fetchTalents();
+      fetchJobs();
     };
 
     initData();
@@ -62,10 +94,116 @@ export default function TalentPoolPage() {
     }
   };
 
+  const fetchJobs = async () => {
+    try {
+      const res = await fetch("/api/jobs");
+      const data = await res.json();
+      if (Array.isArray(data)) setJobs(data);
+    } catch (err) {
+      console.error("Gagal memuat data jobs", err);
+    }
+  };
+
+  // Determine follow status of a talent relative to the HR
+  const getFollowStatus = (talent: Talent): "followed" | "followback" | null => {
+    const talentId = talent.id;
+    const hrId = user?.id;
+
+    if (!hrId) return null;
+
+    // Check if this talent follows the HR by looking at the talent's own following array
+    // This is the source of truth — talent.following contains the list of HR IDs the talent follows
+    const talentFollowsHR = (talent.following || []).includes(hrId);
+
+    if (!talentFollowsHR) return null;
+
+    // Talent follows HR. Now check if HR follows back (HR's following includes talent's id)
+    const hrFollowsTalent = hrFollowing.includes(talentId);
+
+    if (hrFollowsTalent) {
+      return "followed"; // Mutual follow
+    } else {
+      return "followback"; // Talent follows HR, but HR hasn't followed back
+    }
+  };
+
+  // Handle matching
+  const handleMatch = () => {
+    if (!selectedJobId) return;
+
+    const selectedJob = jobs.find((j) => j.id === selectedJobId);
+    if (!selectedJob) return;
+
+    const matched = talents.filter((talent) => {
+      if (!talent.job_title || talent.skor === null) return false;
+      const titleMatch =
+        talent.job_title.toLowerCase().trim() ===
+        selectedJob.job_title.toLowerCase().trim();
+      const skorMatch = talent.skor >= (selectedJob.minimum_skor || 0);
+      return titleMatch && skorMatch;
+    });
+
+    // Sort by highest score
+    matched.sort((a, b) => (b.skor || 0) - (a.skor || 0));
+    setMatchedTalents(matched);
+    setIsMatching(true);
+  };
+
+  const handleResetMatch = () => {
+    setIsMatching(false);
+    setMatchedTalents([]);
+    setSelectedJobId("");
+  };
+
   const handleOpenProfileModal = (talent: Talent) => {
     setSelectedTalent(talent);
     setIsModalOpen(true);
   };
+
+  // Follow back a talent (HR → Talent direction)
+  // The /api/network only supports talent→HR, so we handle HR→talent directly
+  const handleFollowBack = async (talentId: string) => {
+    try {
+      const hrId = user?.id;
+      if (!hrId) return;
+
+      // 1. Add talentId to HR's following list
+      const newHrFollowing = [...hrFollowing, talentId];
+      const { error: hrError } = await supabase
+        .from("profiles")
+        .update({ following: newHrFollowing })
+        .eq("id", hrId);
+
+      if (hrError) throw hrError;
+
+      // 2. Add hrId to talent's followed list
+      const { data: talentProfile } = await supabase
+        .from("profiles")
+        .select("followed")
+        .eq("id", talentId)
+        .single();
+
+      const talentFollowed = ((talentProfile?.followed as string[]) || []);
+      if (!talentFollowed.includes(hrId)) {
+        talentFollowed.push(hrId);
+      }
+
+      const { error: talentError } = await supabase
+        .from("profiles")
+        .update({ followed: talentFollowed })
+        .eq("id", talentId);
+
+      if (talentError) throw talentError;
+
+      // Update local state
+      setHrFollowing(newHrFollowing);
+    } catch (err) {
+      console.error("Gagal follow back:", err);
+    }
+  };
+
+  const displayTalents = isMatching ? matchedTalents : talents;
+  const selectedJob = jobs.find((j) => j.id === selectedJobId);
 
   if (loading) {
     return (
@@ -105,12 +243,72 @@ export default function TalentPoolPage() {
           </p>
         </div>
 
+        {/* Job Matching Controls */}
+        <div className="bg-surface border border-white/10 rounded-xl p-6 shadow-xl mb-6">
+          <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
+            <div className="flex-1 w-full">
+              <label className="block text-xs font-[var(--font-mono)] uppercase text-on-surface-variant mb-2 tracking-wider">
+                Pilih Lowongan untuk Matching
+              </label>
+              <select
+                value={selectedJobId}
+                onChange={(e) => setSelectedJobId(e.target.value)}
+                className="w-full bg-surface-container border border-white/10 rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:border-primary text-sm"
+              >
+                <option value="">— Pilih Job —</option>
+                {jobs
+                  .filter((j) => j.status === "visible")
+                  .map((job) => (
+                    <option key={job.id} value={job.id}>
+                      {job.job_title} — Min. Skor: {job.minimum_skor ?? 0}
+                    </option>
+                  ))}
+              </select>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={handleMatch}
+                disabled={!selectedJobId}
+                className="flex items-center gap-2 bg-gradient-to-r from-primary to-secondary text-on-primary px-5 py-2.5 rounded-lg font-[var(--font-mono)] text-[12px] uppercase tracking-[0.05em] font-bold shadow-md hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200"
+              >
+                <MaterialIcon name="auto_awesome" className="text-base" />
+                Match
+              </button>
+              {isMatching && (
+                <button
+                  onClick={handleResetMatch}
+                  className="flex items-center gap-2 bg-surface-container hover:bg-white/10 text-on-surface-variant px-5 py-2.5 rounded-lg font-[var(--font-mono)] text-[12px] uppercase tracking-[0.05em] font-bold transition-colors"
+                >
+                  <MaterialIcon name="restart_alt" className="text-base" />
+                  Reset
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Matching Result Info */}
+          {isMatching && selectedJob && (
+            <div className="mt-4 p-3 bg-primary/10 border border-primary/30 rounded-lg flex items-center gap-3">
+              <MaterialIcon name="filter_alt" className="text-primary text-lg" />
+              <p className="text-sm text-on-surface font-[var(--font-mono)]">
+                Menampilkan <strong className="text-primary">{matchedTalents.length}</strong> kandidat yang cocok
+                untuk posisi <strong className="text-primary">{selectedJob.job_title}</strong> dengan
+                skor ≥ <strong className="text-primary">{selectedJob.minimum_skor ?? 0}</strong>
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* List / Table Talent Pool */}
         <div className="bg-surface border border-white/10 rounded-xl overflow-hidden shadow-xl">
           {talentsLoading ? (
             <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">Memuat data talent pool...</div>
-          ) : talents.length === 0 ? (
-            <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">Belum ada data talent yang tersedia.</div>
+          ) : displayTalents.length === 0 ? (
+            <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">
+              {isMatching
+                ? "Tidak ada kandidat yang memenuhi kriteria matching."
+                : "Belum ada data talent yang tersedia."}
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
@@ -119,34 +317,54 @@ export default function TalentPoolPage() {
                     <th className="p-4">Email Kandidat</th>
                     <th className="p-4">Job Title</th>
                     <th className="p-4">Skor</th>
-                    <th className="p-4">Role</th>
+                    <th className="p-4">Status</th>
                     <th className="p-4 text-center">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5 text-sm">
-                  {talents.map((talent) => (
-                    <tr key={talent.id} className="hover:bg-white/5 transition-colors">
-                      <td className="p-4 font-semibold text-on-surface">{talent.email}</td>
-                      <td className="p-4 text-on-surface-variant">{talent.job_title || "-"}</td>
-                      <td className="p-4 font-mono font-bold text-primary">
-                        {talent.skor !== null ? `${talent.skor}` : "-"}
-                      </td>
-                      <td className="p-4">
-                        <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                          {talent.role}
-                        </span>
-                      </td>
-                      <td className="p-4 text-center">
-                        <button
-                          onClick={() => handleOpenProfileModal(talent)}
-                          className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 text-primary text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 mx-auto"
-                        >
-                          <MaterialIcon name="visibility" className="text-sm" />
-                          <span>Lihat Profil</span>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {displayTalents.map((talent) => {
+                    const followStatus = getFollowStatus(talent);
+                    return (
+                      <tr key={talent.id} className="hover:bg-white/5 transition-colors">
+                        <td className="p-4 font-semibold text-on-surface">{talent.email}</td>
+                        <td className="p-4 text-on-surface-variant">{talent.job_title || "-"}</td>
+                        <td className="p-4 font-mono font-bold text-primary">
+                          {talent.skor !== null ? `${talent.skor}` : "-"}
+                        </td>
+                        <td className="p-4">
+                          {followStatus === "followed" && (
+                            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-green-500/20 text-green-400 border border-green-500/30 inline-flex items-center gap-1.5">
+                              <MaterialIcon name="check_circle" className="text-xs" />
+                              Followed
+                            </span>
+                          )}
+                          {followStatus === "followback" && (
+                            <button
+                              onClick={() => handleFollowBack(talent.id)}
+                              className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <MaterialIcon name="person_add" className="text-xs" />
+                              Followback
+                            </button>
+                          )}
+                          {followStatus === null && (
+                            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/5 text-on-surface-variant border border-white/10">
+                              —
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-4 text-center">
+                          <button
+                            onClick={() => handleOpenProfileModal(talent)}
+                            className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 text-primary text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 mx-auto"
+                          >
+                            <MaterialIcon name="visibility" className="text-sm" />
+                            <span>Lihat Profil</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -196,10 +414,29 @@ export default function TalentPoolPage() {
                 </div>
               </div>
               <div>
-                <span className="block text-on-surface-variant uppercase tracking-wider mb-1">Role Akses</span>
-                <span className="inline-block px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-400 font-bold uppercase">
-                  {selectedTalent.role}
-                </span>
+                <span className="block text-on-surface-variant uppercase tracking-wider mb-1">Follow Status</span>
+                {(() => {
+                  const status = getFollowStatus(selectedTalent);
+                  if (status === "followed") {
+                    return (
+                      <span className="inline-block px-2.5 py-1 rounded-full bg-green-500/20 text-green-400 font-bold uppercase border border-green-500/30">
+                        Followed (Mutual)
+                      </span>
+                    );
+                  } else if (status === "followback") {
+                    return (
+                      <span className="inline-block px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 font-bold uppercase border border-amber-500/30">
+                        Menunggu Followback
+                      </span>
+                    );
+                  } else {
+                    return (
+                      <span className="inline-block px-2.5 py-1 rounded-full bg-white/5 text-on-surface-variant font-bold uppercase border border-white/10">
+                        Tidak Follow
+                      </span>
+                    );
+                  }
+                })()}
               </div>
               <div>
                 <span className="block text-on-surface-variant uppercase tracking-wider mb-1">User UUID (ID)</span>

@@ -7,7 +7,7 @@ export async function GET() {
   // Mengambil data profiles yang rolenya adalah 'talent'
   const { data, error } = await supabase
     .from("profiles")
-    .select("*")
+    .select("id, email, role, job_title, skor, following")
     .eq("role", "talent");
 
   if (error) {

@@ -37,6 +37,8 @@ export default function HRDashboard() {
   const [stats, setStats] = useState({
     activeJobsCount: 0,
     totalApplicants: 0,
+    followingCount: 0,
+    followedByCount: 0,
   });
 
   useEffect(() => {
@@ -77,9 +79,27 @@ export default function HRDashboard() {
         // Hitung Total Applicants dari seluruh job
         const totalApplicants = jobsData.reduce((acc, curr) => acc + (curr.applicant || 0), 0);
 
+        // Ambil data following/followed HR
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        let followingCount = 0;
+        let followedByCount = 0;
+        if (currentUser) {
+          const { data: hrProfile } = await supabase
+            .from("profiles")
+            .select("following, followed")
+            .eq("id", currentUser.id)
+            .single();
+          if (hrProfile) {
+            followingCount = ((hrProfile.following as string[]) || []).length;
+            followedByCount = ((hrProfile.followed as string[]) || []).length;
+          }
+        }
+
         setStats({
           activeJobsCount: activeJobs.length,
           totalApplicants,
+          followingCount,
+          followedByCount,
         });
 
         // 2. Ambil data Talents dari tabel profiles dengan role 'talent'
@@ -166,8 +186,8 @@ export default function HRDashboard() {
           </p>
         </div>
 
-        {/* Summary Cards (Active Jobs & Total Applicants) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
           <div className="bg-surface border border-white/10 rounded-2xl p-6 shadow-xl flex items-center gap-4">
             <div className="w-14 h-14 rounded-xl bg-primary/20 text-primary flex items-center justify-center">
               <MaterialIcon name="work" className="text-2xl" />
@@ -185,6 +205,26 @@ export default function HRDashboard() {
             <div>
               <p className="text-xs font-[var(--font-mono)] text-on-surface-variant uppercase tracking-wider">Total Applicants</p>
               <h3 className="text-3xl font-bold font-[var(--font-display)] text-on-surface mt-1">{stats.totalApplicants}</h3>
+            </div>
+          </div>
+
+          <div className="bg-surface border border-white/10 rounded-2xl p-6 shadow-xl flex items-center gap-4">
+            <div className="w-14 h-14 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+              <MaterialIcon name="person_add" className="text-2xl" />
+            </div>
+            <div>
+              <p className="text-xs font-[var(--font-mono)] text-on-surface-variant uppercase tracking-wider">Following</p>
+              <h3 className="text-3xl font-bold font-[var(--font-display)] text-on-surface mt-1">{stats.followingCount}</h3>
+            </div>
+          </div>
+
+          <div className="bg-surface border border-white/10 rounded-2xl p-6 shadow-xl flex items-center gap-4">
+            <div className="w-14 h-14 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center">
+              <MaterialIcon name="group_add" className="text-2xl" />
+            </div>
+            <div>
+              <p className="text-xs font-[var(--font-mono)] text-on-surface-variant uppercase tracking-wider">Followed By</p>
+              <h3 className="text-3xl font-bold font-[var(--font-display)] text-on-surface mt-1">{stats.followedByCount}</h3>
             </div>
           </div>
         </div>
