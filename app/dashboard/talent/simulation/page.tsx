@@ -2,43 +2,42 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
 
 import TopNavBar from "@/app/components/ui/TopNavBar";
 import SideNavTalent from "@/app/components/ui/SideNavTalent";
 
 interface TitleItem {
-  id: string; // atau id_title sesuaikan dengan kolom DB Anda
+  id: string;
   name: string;
   created_at: string;
 }
 
-export default function ScenariosTitlePage() {
+export default function SimulationTitlePage() {
   const router = useRouter();
-  const supabase = createClient();
 
   const [titles, setTitles] = useState<TitleItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTitles = async () => {
-      // Mengambil data dari tabel title Anda (sesuaikan nama tabel jika berbeda, misal: mst_title)
-      const { data, error } = await supabase
-        .from('mst_title') 
-        .select('*')
-        .order('created_at', { ascending: true });
-
-      if (error) {
-        console.error("Gagal memuat data title:", error);
-      } else {
-        setTitles(data || []);
+    const fetchTitlesFromAPI = async () => {
+      try {
+        const res = await fetch('/api/titles');
+        if (res.ok) {
+          const data = await res.json();
+          setTitles(data);
+        } else {
+          console.error("Gagal mengambil data dari API titles");
+        }
+      } catch (error) {
+        console.error("Error fetching titles:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
-    fetchTitles();
-  }, [supabase]);
+    fetchTitlesFromAPI();
+  }, []);
 
   return (
     <div className="bg-background text-on-surface font-[var(--font-body)] min-h-screen overflow-x-hidden">
@@ -82,7 +81,7 @@ export default function ScenariosTitlePage() {
                 </div>
 
                 <div className="mt-6 flex items-center justify-between text-sm font-medium text-gray-300 group-hover:text-green-400">
-                  <span>Lihat Skenario</span>
+                  <span>Lihat Simulasi</span>
                   <span>➔</span>
                 </div>
               </Link>

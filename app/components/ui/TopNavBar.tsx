@@ -6,7 +6,7 @@ interface TopNavBarProps {
 
 const talentNavLinks = [
   { label: "Dashboard", href: "/dashboard/talent", active: true },
-  { label: "Simulation", href: "#" },
+  { label: "Simulation", href: "/dashboard/talent/simulation" },
   { label: "Upload CV", href: "#" },
 ];
 
