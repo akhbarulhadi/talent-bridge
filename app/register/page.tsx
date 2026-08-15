@@ -5,10 +5,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("talent");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -21,49 +22,30 @@ export default function LoginPage() {
     try {
       const supabase = createClient();
 
-      // 1. Proses autentikasi email & password
-      const { data: authData, error: authError } =
-        await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          data: {
+            role: role,
+            full_name: email.trim().split("@")[0],
+          },
+        },
+      });
 
       if (authError) {
-        if (authError.name === "AuthRetryableFetchError") {
-          setError(
-            "Cannot connect to authentication server. Check your internet connection, VPN/proxy, or browser extension (ad-blocker), then try again.",
-          );
-        } else {
-          setError(authError.message);
-        }
+        setError(authError.message);
         setLoading(false);
         return;
       }
 
-      // 2. Jika berhasil login, cek role user di tabel profiles
       if (authData.user) {
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", authData.user.id)
-          .single();
-
-        if (profileError) {
-          setError("Failed to fetch user profile data.");
-          setLoading(false);
-          return;
-        }
-
-        // 3. Redirect berdasarkan role
-        if (profileData.role === "hr") {
-          router.push("/dashboard/hr");
-        } else {
-          router.push("/dashboard/talent");
-        }
+        // Redirect to login after successful registration
+        router.push("/login");
         router.refresh();
       }
     } catch (err) {
-      console.error("Login error:", err);
+      console.error("Registration error:", err);
       setError(
         "Failed to connect to the server. Please ensure your internet connection is stable, then try again.",
       );
@@ -97,11 +79,11 @@ export default function LoginPage() {
             </h1>
           </Link>
           <p className="font-[var(--font-mono)] text-[11px] tracking-[0.1em] uppercase text-on-surface-variant mt-4">
-            Sign in to your account
+            Create a new account
           </p>
         </div>
 
-        {/* Login Card */}
+        {/* Register Card */}
         <div className="glass-panel rounded-2xl p-8 relative overflow-hidden">
           {/* Inner ambient glow */}
           <div className="absolute -right-12 -top-12 w-32 h-32 bg-primary/10 rounded-full blur-[40px] pointer-events-none" />
@@ -120,6 +102,33 @@ export default function LoginPage() {
             )}
 
             <form className="space-y-5" onSubmit={handleSubmit}>
+              {/* Role Field */}
+              <div>
+                <label
+                  htmlFor="role"
+                  className="block font-[var(--font-mono)] text-[11px] tracking-[0.05em] font-bold uppercase text-on-surface-variant mb-2"
+                >
+                  Select Role
+                </label>
+                <div className="relative">
+                  <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">
+                    person
+                  </span>
+                  <select
+                    id="role"
+                    name="role"
+                    required
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="w-full pl-11 pr-4 py-3 bg-surface-container border border-white/10 rounded-xl text-on-surface font-[var(--font-body)] text-[14px] focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all duration-200 shadow-inner appearance-none"
+                    disabled={loading}
+                  >
+                    <option value="talent">Talent</option>
+                    <option value="hr">HR</option>
+                  </select>
+                </div>
+              </div>
+
               {/* Email Field */}
               <div>
                 <label
@@ -141,7 +150,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-11 pr-4 py-3 bg-surface-container border border-white/10 rounded-xl text-on-surface placeholder-on-surface-variant/50 font-[var(--font-body)] text-[14px] focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all duration-200 shadow-inner"
-                    placeholder="nama@email.com"
+                    placeholder="name@email.com"
                     disabled={loading}
                   />
                 </div>
@@ -163,7 +172,7 @@ export default function LoginPage() {
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
+                    autoComplete="new-password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -198,9 +207,9 @@ export default function LoginPage() {
                 ) : (
                   <>
                     <span className="material-symbols-outlined text-lg">
-                      login
+                      person_add
                     </span>
-                    Sign In
+                    Register
                   </>
                 )}
               </button>
@@ -209,12 +218,12 @@ export default function LoginPage() {
             {/* Divider */}
             <div className="mt-6 pt-6 border-t border-white/5 text-center">
               <p className="text-on-surface-variant text-[13px]">
-                Don't have an account?{" "}
+                Already have an account?{" "}
                 <Link
-                  href="/register"
+                  href="/login"
                   className="text-primary font-medium hover:text-primary-container transition-colors"
                 >
-                  Register Now
+                  Sign In
                 </Link>
               </p>
             </div>

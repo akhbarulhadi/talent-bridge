@@ -24,9 +24,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SkillDock — Talent Bridge",
+  title: "Talent Bridge",
   description:
-    "Platform gamifikasi untuk menghubungkan talenta terbaik dengan perusahaan impian. Level up your career.",
+    "Gamification platform to connect top talents with dream companies. Level up your career.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -71,7 +71,7 @@ export default function ConsequencePanel({
           disabled={isLoading}
           className="btn-primary-gradient group flex items-center gap-2 rounded-lg px-5 py-2.5 font-[var(--font-mono)] text-[12px] uppercase tracking-[0.05em] font-bold text-on-primary hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-60"
         >
-          {isLoading ? "Memuat..." : "Continue"}
+          {isLoading ? "Loading..." : "Continue"}
           <ChevronRight
             size={15}
             className="transition-transform group-hover:translate-x-0.5"

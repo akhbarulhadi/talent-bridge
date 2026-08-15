@@ -226,7 +226,7 @@ export default function TalentPoolPage() {
       {/* Mobile TopNavBar */}
       <nav className="md:hidden fixed top-0 w-full z-50 flex justify-between items-center px-gutter py-4 h-20 bg-surface/70 backdrop-blur-xl border-b border-white/10 shadow-2xl">
         <h1 className="font-[var(--font-display)] text-[32px] leading-[1.2] font-bold text-primary tracking-tighter">
-          SkillDock
+          Talent Bridge
         </h1>
         <button className="text-primary active:scale-95 transition-transform duration-200">
           <MaterialIcon name="menu" className="text-3xl" />
@@ -239,7 +239,7 @@ export default function TalentPoolPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold font-[var(--font-display)] text-primary">Talent Pool</h1>
           <p className="text-sm text-on-surface-variant font-[var(--font-mono)] mt-1">
-            Daftar kandidat pengguna dengan role talent beserta skor dan target job.
+            List of talent candidates along with scores and target jobs.
           </p>
         </div>
 
@@ -248,19 +248,19 @@ export default function TalentPoolPage() {
           <div className="flex flex-col md:flex-row items-start md:items-end gap-4">
             <div className="flex-1 w-full">
               <label className="block text-xs font-[var(--font-mono)] uppercase text-on-surface-variant mb-2 tracking-wider">
-                Pilih Lowongan untuk Matching
+                Select Vacancy for Matching
               </label>
               <select
                 value={selectedJobId}
                 onChange={(e) => setSelectedJobId(e.target.value)}
                 className="w-full bg-surface-container border border-white/10 rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:border-primary text-sm"
               >
-                <option value="">— Pilih Job —</option>
+                <option value="">— Select Job —</option>
                 {jobs
                   .filter((j) => j.status === "visible")
                   .map((job) => (
                     <option key={job.id} value={job.id}>
-                      {job.job_title} — Min. Skor: {job.minimum_skor ?? 0}
+                      {job.job_title} — Min. Score: {job.minimum_skor ?? 0}
                     </option>
                   ))}
               </select>
@@ -291,9 +291,9 @@ export default function TalentPoolPage() {
             <div className="mt-4 p-3 bg-primary/10 border border-primary/30 rounded-lg flex items-center gap-3">
               <MaterialIcon name="filter_alt" className="text-primary text-lg" />
               <p className="text-sm text-on-surface font-[var(--font-mono)]">
-                Menampilkan <strong className="text-primary">{matchedTalents.length}</strong> kandidat yang cocok
-                untuk posisi <strong className="text-primary">{selectedJob.job_title}</strong> dengan
-                skor ≥ <strong className="text-primary">{selectedJob.minimum_skor ?? 0}</strong>
+                Showing <strong className="text-primary">{matchedTalents.length}</strong> suitable candidates
+                for the <strong className="text-primary">{selectedJob.job_title}</strong> position with
+                score ≥ <strong className="text-primary">{selectedJob.minimum_skor ?? 0}</strong>
               </p>
             </div>
           )}
@@ -302,23 +302,23 @@ export default function TalentPoolPage() {
         {/* List / Table Talent Pool */}
         <div className="bg-surface border border-white/10 rounded-xl overflow-hidden shadow-xl">
           {talentsLoading ? (
-            <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">Memuat data talent pool...</div>
+            <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">Loading talent pool data...</div>
           ) : displayTalents.length === 0 ? (
             <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">
               {isMatching
-                ? "Tidak ada kandidat yang memenuhi kriteria matching."
-                : "Belum ada data talent yang tersedia."}
+                ? "No candidates match the criteria."
+                : "No talent data available yet."}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/5 font-[var(--font-mono)] text-xs text-on-surface-variant uppercase tracking-wider">
-                    <th className="p-4">Email Kandidat</th>
+                    <th className="p-4">Candidate Email</th>
                     <th className="p-4">Job Title</th>
-                    <th className="p-4">Skor</th>
+                    <th className="p-4">Score</th>
                     <th className="p-4">Status</th>
-                    <th className="p-4 text-center">Aksi</th>
+                    <th className="p-4 text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5 text-sm">
@@ -359,7 +359,7 @@ export default function TalentPoolPage() {
                             className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 text-primary text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5 mx-auto"
                           >
                             <MaterialIcon name="visibility" className="text-sm" />
-                            <span>Lihat Profil</span>
+                            <span>View Profile</span>
                           </button>
                         </td>
                       </tr>
@@ -390,17 +390,17 @@ export default function TalentPoolPage() {
                 <MaterialIcon name="person" className="text-3xl" />
               </div>
               <h2 className="text-xl font-bold font-[var(--font-display)] text-on-surface">
-                Detail Profil Talenta
+                Talent Profile Details
               </h2>
               <p className="text-xs text-on-surface-variant font-[var(--font-mono)] mt-1">
-                Informasi detail akun dan penilaian kandidat
+                Detailed account information and candidate assessment
               </p>
             </div>
 
             {/* Detail Informasi */}
             <div className="space-y-4 bg-surface-container p-4 rounded-xl border border-white/5 font-[var(--font-mono)] text-xs">
               <div>
-                <span className="block text-on-surface-variant uppercase tracking-wider mb-1">Email Pengguna</span>
+                <span className="block text-on-surface-variant uppercase tracking-wider mb-1">User Email</span>
                 <span className="text-sm text-on-surface font-semibold">{selectedTalent.email}</span>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -409,7 +409,7 @@ export default function TalentPoolPage() {
                   <span className="text-sm text-on-surface font-semibold">{selectedTalent.job_title || "-"}</span>
                 </div>
                 <div>
-                  <span className="block text-on-surface-variant uppercase tracking-wider mb-1">Skor</span>
+                  <span className="block text-on-surface-variant uppercase tracking-wider mb-1">Score</span>
                   <span className="text-sm text-primary font-bold">{selectedTalent.skor !== null ? selectedTalent.skor : "-"}</span>
                 </div>
               </div>
@@ -426,13 +426,13 @@ export default function TalentPoolPage() {
                   } else if (status === "followback") {
                     return (
                       <span className="inline-block px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 font-bold uppercase border border-amber-500/30">
-                        Menunggu Followback
+                        Awaiting Followback
                       </span>
                     );
                   } else {
                     return (
                       <span className="inline-block px-2.5 py-1 rounded-full bg-white/5 text-on-surface-variant font-bold uppercase border border-white/10">
-                        Tidak Follow
+                        Not Following
                       </span>
                     );
                   }
@@ -451,7 +451,7 @@ export default function TalentPoolPage() {
                 onClick={() => setIsModalOpen(false)}
                 className="w-full px-4 py-2.5 rounded-lg bg-primary text-on-primary text-sm font-bold shadow hover:opacity-90 transition-opacity"
               >
-                Tutup
+                Close
               </button>
             </div>
           </div>

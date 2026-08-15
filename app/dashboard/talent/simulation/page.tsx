@@ -27,7 +27,7 @@ export default function SimulationTitlePage() {
           const data = await res.json();
           setTitles(data);
         } else {
-          console.error("Gagal mengambil data dari API titles");
+          console.error("Failed to fetch data from titles API");
         }
       } catch (error) {
         console.error("Error fetching titles:", error);
@@ -46,8 +46,8 @@ export default function SimulationTitlePage() {
 
       <main className="lg:ml-72 mt-20 p-6 md:p-10 max-w-[1440px] mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Pilih Jalur & Judul Simulasi</h1>
-          <p className="text-gray-400 text-sm">Pilih bidang atau judul operasional yang ingin Anda uji keterampilannya.</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Select Simulation Path & Title</h1>
+          <p className="text-gray-400 text-sm">Select the operational field or title you want to test your skills in.</p>
         </div>
 
         {loading ? (
@@ -58,7 +58,7 @@ export default function SimulationTitlePage() {
           </div>
         ) : titles.length === 0 ? (
           <div className="bg-gray-900 p-8 rounded-xl border border-gray-800 text-center text-gray-400">
-            Belum ada data Title yang tersedia di database.
+            No Title data available in the database yet.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -76,12 +76,12 @@ export default function SimulationTitlePage() {
                     {item.name}
                   </h3>
                   <p className="text-gray-400 text-xs font-mono">
-                    Dibuat: {new Date(item.created_at).toLocaleDateString('id-ID', { dateStyle: 'medium' })}
+                    Created: {new Date(item.created_at).toLocaleDateString('en-US', { dateStyle: 'medium' })}
                   </p>
                 </div>
 
                 <div className="mt-6 flex items-center justify-between text-sm font-medium text-gray-300 group-hover:text-green-400">
-                  <span>Lihat Simulasi</span>
+                  <span>View Simulation</span>
                   <span>➔</span>
                 </div>
               </Link>

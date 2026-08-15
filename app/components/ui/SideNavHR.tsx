@@ -52,7 +52,7 @@ export default function SideNavHR({ user }: SideNavHRProps) {
       {/* Logo */}
       <div className="px-6 mb-12">
         <h1 className="font-[var(--font-display)] text-[48px] leading-[1.1] tracking-[-0.02em] font-bold text-primary">
-          SkillDock
+          Talent Bridge
         </h1>
         <p className="font-[var(--font-mono)] text-[12px] leading-none tracking-[0.05em] font-bold text-on-surface-variant mt-2 uppercase">
           HR Portal
