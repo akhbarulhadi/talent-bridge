@@ -92,7 +92,7 @@ export default function HRInboxPage() {
       const inboxData = await inboxRes.json();
       if (Array.isArray(inboxData)) setInboxList(inboxData);
     } catch (err) {
-      console.error("Gagal memuat data inbox", err);
+      console.error("Failed to load inbox data", err);
     } finally {
       setDataLoading(false);
     }
@@ -113,7 +113,7 @@ export default function HRInboxPage() {
   const handleSendClick = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedTalentId) {
-      showNotification("error", "Pilih Talent", "Silakan pilih salah satu talent yang valid dari daftar pencarian.");
+      showNotification("error", "Select Talent", "Please select a valid talent from the search list.");
       return;
     }
     setIsConfirmOpen(true);
@@ -137,17 +137,17 @@ export default function HRInboxPage() {
       });
 
       if (res.ok) {
-        showNotification("success", "Email Terkirim", `Pesan berhasil dikirim ke ${targetTalent.email}`);
+        showNotification("success", "Email Sent", `Message successfully sent to ${targetTalent.email}`);
         setSubject("");
         setMessage("");
         setSelectedTalentId("");
         setTalentSearchQuery("");
         fetchTalentsAndInbox();
       } else {
-        showNotification("error", "Gagal Mengirim", "Terjadi kesalahan saat menyimpan pesan ke database.");
+        showNotification("error", "Failed to Send", "An error occurred while saving the message to the database.");
       }
     } catch (error) {
-      showNotification("error", "Terjadi Kesalahan", "Gagal terhubung ke server.");
+      showNotification("error", "An Error Occurred", "Failed to connect to the server.");
     }
   };
 
@@ -170,7 +170,7 @@ export default function HRInboxPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold font-[var(--font-display)] text-primary">HR Inbox & Messaging</h1>
           <p className="text-sm text-on-surface-variant font-[var(--font-mono)] mt-1">
-            Kirim pesan atau undangan wawancara langsung ke email talent terdaftar.
+            Send messages or interview invitations directly to registered talent emails.
           </p>
         </div>
 
@@ -179,14 +179,14 @@ export default function HRInboxPage() {
           <div className="bg-surface border border-white/10 rounded-xl p-6 shadow-xl lg:col-span-1 h-fit">
             <h2 className="text-xl font-bold font-[var(--font-display)] text-primary mb-4 flex items-center gap-2">
               <MaterialIcon name="send" className="text-lg" />
-              <span>Kirim Pesan Baru</span>
+              <span>Send New Message</span>
             </h2>
             <form onSubmit={handleSendClick} className="space-y-4">
               
               {/* Searchable Dropdown Talent */}
               <div className="relative" ref={dropdownRef}>
                 <label className="block text-xs font-[var(--font-mono)] uppercase text-on-surface-variant mb-1">
-                  Cari & Pilih Talent (Penerima)
+                  Search & Select Talent (Recipient)
                 </label>
                 <div className="relative">
                   <input
@@ -199,7 +199,7 @@ export default function HRInboxPage() {
                       if (!e.target.value) setSelectedTalentId("");
                     }}
                     onFocus={() => setIsDropdownOpen(true)}
-                    placeholder="Ketik email atau job title talent..."
+                    placeholder="Type email or talent job title..."
                     className="w-full bg-surface-container border border-white/10 rounded-lg pl-4 pr-10 py-2.5 text-on-surface text-sm focus:outline-none focus:border-primary"
                   />
                   <div className="absolute right-3 top-2.5 text-on-surface-variant pointer-events-none">
@@ -212,7 +212,7 @@ export default function HRInboxPage() {
                   <div className="absolute z-20 w-full mt-1 bg-surface-container border border-white/10 rounded-lg shadow-2xl max-h-60 overflow-y-auto">
                     {filteredTalents.length === 0 ? (
                       <div className="p-3 text-xs text-on-surface-variant font-[var(--font-mono)] text-center">
-                        Tidak ada talent yang ditemukan
+                        No talent found
                       </div>
                     ) : (
                       filteredTalents.map((t) => (
@@ -223,7 +223,7 @@ export default function HRInboxPage() {
                         >
                           <div className="font-semibold text-primary">{t.email}</div>
                           <div className="text-on-surface-variant font-[var(--font-mono)]">
-                            {t.job_title ? `Job: ${t.job_title}` : "Tanpa Job Title"} {t.skor !== null ? `• Skor: ${t.skor}` : ""}
+                            {t.job_title ? `Job: ${t.job_title}` : "No Job Title"} {t.skor !== null ? `• Score: ${t.skor}` : ""}
                           </div>
                         </div>
                       ))
@@ -234,28 +234,28 @@ export default function HRInboxPage() {
 
               <div>
                 <label className="block text-xs font-[var(--font-mono)] uppercase text-on-surface-variant mb-1">
-                  Subjek Pesan
+                  Message Subject
                 </label>
                 <input
                   type="text"
                   required
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  placeholder="Contoh: Undangan Interview SkillDock"
+                  placeholder="Example: Talent Bridge Interview Invitation"
                   className="w-full bg-surface-container border border-white/10 rounded-lg px-4 py-2.5 text-on-surface text-sm focus:outline-none focus:border-primary"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-[var(--font-mono)] uppercase text-on-surface-variant mb-1">
-                  Isi Pesan / Email
+                  Message Body / Email
                 </label>
                 <textarea
                   required
                   rows={4}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Tulis pesan atau detail jadwal interview di sini..."
+                  placeholder="Write your message or interview schedule details here..."
                   className="w-full bg-surface-container border border-white/10 rounded-lg px-4 py-2.5 text-on-surface text-sm focus:outline-none focus:border-primary resize-none"
                 />
               </div>
@@ -265,7 +265,7 @@ export default function HRInboxPage() {
                 className="w-full py-2.5 rounded-lg bg-primary text-on-primary font-bold text-sm shadow hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
               >
                 <MaterialIcon name="mail" />
-                <span>Kirim Pesan</span>
+                <span>Send Message</span>
               </button>
             </form>
           </div>
@@ -273,23 +273,23 @@ export default function HRInboxPage() {
           {/* Tabel Riwayat Pesan Terkirim */}
           <div className="bg-surface border border-white/10 rounded-xl overflow-hidden shadow-xl lg:col-span-2">
             <div className="p-6 border-b border-white/10 flex justify-between items-center">
-              <h2 className="text-xl font-bold font-[var(--font-display)] text-primary">Riwayat Pesan Terkirim</h2>
-              <span className="text-xs font-[var(--font-mono)] text-on-surface-variant">Total: {inboxList.length} Pesan</span>
+              <h2 className="text-xl font-bold font-[var(--font-display)] text-primary">Sent Messages History</h2>
+              <span className="text-xs font-[var(--font-mono)] text-on-surface-variant">Total: {inboxList.length} Messages</span>
             </div>
 
             {dataLoading ? (
-              <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">Memuat riwayat pesan...</div>
+              <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">Loading message history...</div>
             ) : inboxList.length === 0 ? (
-              <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">Belum ada pesan yang dikirim ke talent.</div>
+              <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">No messages sent to talent yet.</div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-white/10 bg-white/5 font-[var(--font-mono)] text-xs text-on-surface-variant uppercase tracking-wider">
-                      <th className="p-4">Penerima</th>
-                      <th className="p-4">Subjek</th>
+                      <th className="p-4">Recipient</th>
+                      <th className="p-4">Subject</th>
                       <th className="p-4">Status</th>
-                      <th className="p-4">Waktu</th>
+                      <th className="p-4">Time</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-sm">
@@ -306,7 +306,7 @@ export default function HRInboxPage() {
                           </span>
                         </td>
                         <td className="p-4 text-xs text-on-surface-variant font-[var(--font-mono)]">
-                          {new Date(item.created_at).toLocaleString("id-ID", {
+                          {new Date(item.created_at).toLocaleString("en-US", {
                             dateStyle: "medium",
                             timeStyle: "short",
                           })}
@@ -328,9 +328,9 @@ export default function HRInboxPage() {
             <div className="w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center mx-auto mb-4">
               <MaterialIcon name="help" className="text-2xl" />
             </div>
-            <h3 className="text-lg font-bold font-[var(--font-display)] text-on-surface mb-2">Konfirmasi Kirim Pesan</h3>
+            <h3 className="text-lg font-bold font-[var(--font-display)] text-on-surface mb-2">Confirm Send Message</h3>
             <p className="text-xs text-on-surface-variant font-[var(--font-mono)] mb-6">
-              Apakah Anda yakin ingin mengirim pesan email ini ke talent terpilih?
+              Are you sure you want to send this email message to the selected talent?
             </p>
             <div className="flex justify-center gap-3">
               <button
@@ -338,14 +338,14 @@ export default function HRInboxPage() {
                 onClick={() => setIsConfirmOpen(false)}
                 className="flex-1 px-4 py-2 rounded-lg bg-surface-container hover:bg-white/10 text-on-surface-variant text-sm font-bold transition-colors"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
                 onClick={confirmAndSend}
                 className="flex-1 px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-bold shadow hover:opacity-90 transition-opacity"
               >
-                Ya, Kirim
+                Yes, Send
               </button>
             </div>
           </div>

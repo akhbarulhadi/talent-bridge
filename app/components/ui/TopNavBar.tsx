@@ -48,7 +48,7 @@ export default function TopNavBar({ variant = "talent" }: TopNavBarProps) {
         <div className="flex items-center gap-8">
         {/* Logo */}
         <span className="font-[var(--font-display)] text-[32px] md:text-[48px] font-bold text-primary tracking-tighter leading-none">
-          SkillDock
+          Talent Bridge
         </span>
 
         {/* Desktop Navigation Links */}

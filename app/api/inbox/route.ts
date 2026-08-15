@@ -35,15 +35,15 @@ export async function POST(request: Request) {
   try {
     // 1. Kirim email asli via Gmail SMTP
     await transporter.sendMail({
-      from: `"SkillDock HR Portal" <${process.env.EMAIL_USER}>`,
+      from: `"Talent Bridge HR Portal" <${process.env.EMAIL_USER}>`,
       to: talent_email,
       subject: subject,
       text: message,
       html: `<div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
-              <h2 style="color: #4f46e5;">Pesan dari Tim HR SkillDock</h2>
+              <h2 style="color: #4f46e5;">Message from Talent Bridge HR Team</h2>
               <p>${message.replace(/\n/g, '<br>')}</p>
               <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-              <p style="font-size: 12px; color: #666;">Email ini dikirim secara otomatis melalui sistem rekrutmen.</p>
+              <p style="font-size: 12px; color: #666;">This email is sent automatically via the recruitment system.</p>
             </div>`,
     });
 
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(data[0]);
   } catch (err: any) {
-    console.error("Gagal mengirim email:", err);
-    return NextResponse.json({ error: "Gagal mengirim email via SMTP: " + err.message }, { status: 500 });
+    console.error("Failed to send email:", err);
+    return NextResponse.json({ error: "Failed to send email via SMTP: " + err.message }, { status: 500 });
   }
 }

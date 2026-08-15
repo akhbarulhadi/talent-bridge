@@ -37,7 +37,7 @@ export default function SimulationsListByTitlePage({
           setTitleName(data.titleName);
           setSimulations(data.simulations || data.scenarios);
         } else {
-          console.error("Gagal mengambil data dari API simulation");
+          console.error("Failed to fetch data from simulation API");
         }
       } catch (error) {
         console.error("Error fetching simulations:", error);
@@ -62,14 +62,13 @@ export default function SimulationsListByTitlePage({
             href="/dashboard/talent/simulation"
             className="text-gray-500 hover:text-green-400 text-sm font-mono mb-3 inline-block"
           >
-            &larr; Kembali ke Daftar Judul Simulasi
+            &larr; Back to Simulation Title List
           </Link>
           <h1 className="text-3xl font-bold text-white mb-1">
-            Simulasi: {titleName || "Memuat..."}
+            Simulation: {titleName || "Loading..."}
           </h1>
           <p className="text-gray-400 text-sm">
-            Pilih modul simulasi interaktif di bawah ini untuk memulai
-            tantangan.
+            Select an interactive simulation module below to start the challenge.
           </p>
         </div>
 
@@ -84,7 +83,7 @@ export default function SimulationsListByTitlePage({
           </div>
         ) : simulations.length === 0 ? (
           <div className="bg-gray-900 p-8 rounded-xl border border-gray-800 text-center text-gray-400">
-            Belum ada simulasi yang tersedia untuk Judul ini.
+            No simulation available for this Title yet.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -96,10 +95,10 @@ export default function SimulationsListByTitlePage({
                 <div>
                   <div className="flex justify-between items-center mb-3">
                     <span className="text-xs font-mono px-2.5 py-1 rounded bg-green-950 text-green-400 border border-green-800">
-                      {sim.tingkat_kesulitan || "Menengah"}
+                      {sim.tingkat_kesulitan || "Intermediate"}
                     </span>
                     <span className="text-xs font-mono text-gray-400">
-                      ⏱️ {sim.estimasi_durasi || 15} Menit
+                      ⏱️ {sim.estimasi_durasi || 15} Minutes
                     </span>
                   </div>
 
@@ -117,7 +116,7 @@ export default function SimulationsListByTitlePage({
                     href={`/dashboard/talent/problem/${sim.id}`}
                     className="bg-green-600 hover:bg-green-500 text-black font-bold px-4 py-2 rounded-lg text-sm transition-colors tracking-wide uppercase shadow-md shadow-green-950"
                   >
-                    Mulai Simulasi ➔
+                    Start Simulation ➔
                   </Link>
                 </div>
               </div>

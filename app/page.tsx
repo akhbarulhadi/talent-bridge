@@ -8,51 +8,51 @@ const features = [
     icon: "psychology",
     title: "Decision Simulation",
     description:
-      "Hadapi skenario dunia nyata melalui simulasi interaktif yang menguji kemampuan berpikir kritis dan pengambilan keputusan Anda.",
+      "Face real-world scenarios through interactive simulations that test your critical thinking and decision-making skills.",
     gradient: "from-primary-container to-primary",
   },
   {
     icon: "leaderboard",
-    title: "Skor & Peringkat",
+    title: "Score & Rank",
     description:
-      "Dapatkan skor berdasarkan performa simulasi. Semakin tinggi skor, semakin besar peluang ditemukan oleh perusahaan.",
+      "Earn scores based on simulation performance. Higher scores mean greater chances of being discovered by companies.",
     gradient: "from-secondary-container to-secondary",
   },
   {
     icon: "work",
     title: "Smart Matching",
     description:
-      "Algoritma matching otomatis mencocokkan skor Anda dengan minimum skor lowongan perusahaan. Tanpa harus melamar manual.",
+      "Automatic matching algorithm matches your score with minimum company vacancy scores. No manual application needed.",
     gradient: "from-tertiary-container to-tertiary",
   },
   {
     icon: "description",
     title: "CV Intelligence",
     description:
-      "Upload CV Anda dan biarkan AI menganalisis kecocokan skill dengan kebutuhan industri secara otomatis.",
+      "Upload your CV and let AI automatically analyze skill match with industry needs.",
     gradient: "from-primary to-secondary",
   },
   {
     icon: "group",
     title: "Network & Follow",
     description:
-      "Bangun jaringan profesional. HR bisa follow talent potensial, dan talent bisa melihat siapa yang tertarik.",
+      "Build professional network. HR can follow potential talents, and talents can see who is interested.",
     gradient: "from-secondary to-tertiary",
   },
   {
     icon: "mail",
     title: "Direct Inbox",
     description:
-      "HR dapat langsung mengirim pesan ke talent terbaik. Komunikasi tanpa hambatan untuk rekrutmen cepat.",
+      "HR can directly send messages to top talents. Seamless communication for fast recruitment.",
     gradient: "from-tertiary to-primary",
   },
 ];
 
 const stats = [
-  { value: "500+", label: "Talent Aktif", icon: "person" },
-  { value: "120+", label: "Lowongan", icon: "work" },
+  { value: "500+", label: "Active Talents", icon: "person" },
+  { value: "120+", label: "Job Vacancies", icon: "work" },
   { value: "95%", label: "Match Rate", icon: "thumb_up" },
-  { value: "50+", label: "Perusahaan", icon: "apartment" },
+  { value: "50+", label: "Companies", icon: "apartment" },
 ];
 
 export default function Home() {
@@ -82,7 +82,7 @@ export default function Home() {
               </span>
             </div>
             <h1 className="font-[var(--font-display)] text-[28px] leading-none font-bold text-primary tracking-tight">
-              SkillDock
+              Talent Bridge
             </h1>
           </Link>
 
@@ -92,7 +92,7 @@ export default function Home() {
               href="/login"
               className="btn-primary-gradient px-6 py-2.5 rounded-xl font-[var(--font-mono)] text-[12px] leading-none tracking-[0.05em] font-bold uppercase text-on-primary hover:scale-[1.03] active:scale-95 transition-all duration-200 shadow-lg shadow-primary/20"
             >
-              Masuk
+              Sign In
             </Link>
           </div>
         </div>
@@ -110,7 +110,7 @@ export default function Home() {
                 rocket_launch
               </span>
               <span className="font-[var(--font-mono)] text-[11px] tracking-[0.05em] font-bold uppercase text-primary">
-                Platform Gamifikasi Karier #1 di Indonesia
+                #1 Career Gamification Platform
               </span>
             </div>
 
@@ -118,10 +118,10 @@ export default function Home() {
             <h1
               className={`font-[var(--font-display)] text-[40px] sm:text-[56px] lg:text-[72px] leading-[1.05] tracking-[-0.03em] font-bold mb-6 transition-all duration-700 delay-100 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
             >
-              <span className="text-on-surface">Level Up Karier</span>
+              <span className="text-on-surface">Level Up Career</span>
               <br />
               <span className="bg-gradient-to-r from-primary via-secondary to-tertiary bg-clip-text text-transparent">
-                Melalui Simulasi
+                Through Simulation
               </span>
             </h1>
 
@@ -129,16 +129,16 @@ export default function Home() {
             <p
               className={`max-w-2xl mx-auto font-[var(--font-body)] text-[16px] sm:text-[18px] leading-[1.6] text-on-surface-variant mb-10 transition-all duration-700 delay-200 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
             >
-              SkillDock menghubungkan talenta terbaik dengan perusahaan impian
-              melalui{" "}
+              Talent Bridge connects top talents with dream companies
+              through{" "}
               <span className="text-secondary font-medium">
-                simulasi decision-making
+                decision-making simulations
               </span>{" "}
-              dan{" "}
+              and{" "}
               <span className="text-tertiary font-medium">
-                smart matching berbasis skor
+                score-based smart matching
               </span>
-              . Buktikan kemampuanmu, bukan hanya CV.
+              . Prove your skills, not just your CV.
             </p>
 
             {/* CTA Buttons */}
@@ -152,7 +152,7 @@ export default function Home() {
                 <span className="material-symbols-outlined text-lg">
                   play_arrow
                 </span>
-                Mulai Sekarang
+                Start Now
               </Link>
               <a
                 href="#features"
@@ -161,7 +161,7 @@ export default function Home() {
                 <span className="material-symbols-outlined text-lg">
                   info
                 </span>
-                Pelajari Lebih Lanjut
+                Learn More
               </a>
             </div>
 
@@ -186,7 +186,7 @@ export default function Home() {
                       85
                     </p>
                     <p className="font-[var(--font-mono)] text-[10px] uppercase tracking-wider text-on-surface-variant mt-1">
-                      Skor Rata-rata
+                      Avg Score
                     </p>
                   </div>
 
@@ -214,7 +214,7 @@ export default function Home() {
                       Gold
                     </p>
                     <p className="font-[var(--font-mono)] text-[10px] uppercase tracking-wider text-on-surface-variant mt-1">
-                      Rank Tertinggi
+                      Highest Rank
                     </p>
                   </div>
                 </div>
@@ -255,16 +255,14 @@ export default function Home() {
             {/* Section Header */}
             <div className="text-center mb-16">
               <p className="font-[var(--font-mono)] text-[11px] tracking-[0.1em] font-bold uppercase text-primary mb-3">
-                Fitur Unggulan
+                Key Features
               </p>
               <h2 className="font-[var(--font-display)] text-[32px] sm:text-[40px] leading-[1.1] font-bold text-on-surface mb-4">
-                Satu Platform,{" "}
-                <span className="text-primary">Semua Kebutuhan</span>
+                One Platform,{" "}
+                <span className="text-primary">All Needs</span>
               </h2>
               <p className="max-w-xl mx-auto text-on-surface-variant text-[15px] leading-relaxed">
-                Dari simulasi keputusan hingga matching otomatis dengan
-                perusahaan — SkillDock dirancang untuk revolusi cara kamu
-                membangun karier.
+                From decision simulations to automated matching with companies — Talent Bridge is designed to revolutionize how you build your career.
               </p>
             </div>
 
@@ -305,11 +303,11 @@ export default function Home() {
           <div className="max-w-5xl mx-auto">
             <div className="text-center mb-16">
               <p className="font-[var(--font-mono)] text-[11px] tracking-[0.1em] font-bold uppercase text-secondary mb-3">
-                Cara Kerja
+                How It Works
               </p>
               <h2 className="font-[var(--font-display)] text-[32px] sm:text-[40px] leading-[1.1] font-bold text-on-surface">
-                Tiga Langkah Menuju{" "}
-                <span className="text-secondary">Karier Impian</span>
+                Three Steps to {" "}
+                <span className="text-secondary">Dream Career</span>
               </h2>
             </div>
 
@@ -318,22 +316,22 @@ export default function Home() {
                 {
                   step: "01",
                   icon: "play_circle",
-                  title: "Ikuti Simulasi",
-                  desc: "Pilih skenario sesuai bidang karier Anda dan selesaikan decision-making simulation.",
+                  title: "Take Simulation",
+                  desc: "Choose a scenario in your career field and complete the decision-making simulation.",
                   color: "primary",
                 },
                 {
                   step: "02",
                   icon: "emoji_events",
-                  title: "Dapatkan Skor",
-                  desc: "Setiap keputusan menghasilkan skor. Akumulasi skor menentukan ranking dan visibilitas Anda.",
+                  title: "Earn Score",
+                  desc: "Every decision generates a score. Accumulated scores determine your ranking and visibility.",
                   color: "secondary",
                 },
                 {
                   step: "03",
                   icon: "handshake",
-                  title: "Ditemukan HR",
-                  desc: "HR melihat talent dengan skor tertinggi. Jika cocok, mereka langsung menghubungi Anda.",
+                  title: "Discovered by HR",
+                  desc: "HR views talents with the highest scores. If there is a match, they will contact you directly.",
                   color: "tertiary",
                 },
               ].map((item, i) => (
@@ -388,11 +386,10 @@ export default function Home() {
                   rocket_launch
                 </span>
                 <h2 className="font-[var(--font-display)] text-[28px] sm:text-[36px] leading-[1.1] font-bold text-on-surface mb-4">
-                  Siap Memulai Perjalanan?
+                  Ready to Start the Journey?
                 </h2>
                 <p className="text-on-surface-variant text-[15px] leading-relaxed mb-8 max-w-lg mx-auto">
-                  Bergabunglah dengan ratusan talent yang sudah meningkatkan
-                  karier mereka melalui SkillDock. Gratis, tanpa komitmen.
+                  Join hundreds of talents who have already leveled up their careers through Talent Bridge. Free, no commitment.
                 </p>
                 <Link
                   href="/login"
@@ -401,7 +398,7 @@ export default function Home() {
                   <span className="material-symbols-outlined text-lg">
                     login
                   </span>
-                  Masuk Sekarang
+                  Sign In Now
                 </Link>
               </div>
             </div>
@@ -421,13 +418,13 @@ export default function Home() {
                 </span>
               </div>
               <span className="font-[var(--font-display)] text-[20px] font-bold text-on-surface-variant">
-                SkillDock
+                Talent Bridge
               </span>
             </div>
 
             {/* Copyright */}
             <p className="font-[var(--font-mono)] text-[11px] tracking-wider text-on-surface-variant uppercase">
-              &copy; {new Date().getFullYear()} SkillDock — Talent Bridge. All
+              &copy; {new Date().getFullYear()} Talent Bridge. All
               rights reserved.
             </p>
 

@@ -137,7 +137,7 @@ export default function HRDashboard() {
         }
       }
     } catch (err) {
-      console.error("Gagal memuat data dashboard HR:", err);
+      console.error("Failed to load HR dashboard data:", err);
     }
   };
 
@@ -187,7 +187,7 @@ export default function HRDashboard() {
       {/* Mobile TopNavBar */}
       <nav className="md:hidden fixed top-0 w-full z-50 flex justify-between items-center px-gutter py-4 h-20 bg-surface/70 backdrop-blur-xl border-b border-white/10 shadow-2xl">
         <h1 className="font-[var(--font-display)] text-[32px] leading-[1.2] font-bold text-primary tracking-tighter">
-          SkillDock
+          Talent Bridge
         </h1>
         <button className="text-primary active:scale-95 transition-transform duration-200">
           <MaterialIcon name="menu" className="text-3xl" />
@@ -201,7 +201,7 @@ export default function HRDashboard() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold font-[var(--font-display)] text-primary">HR Dashboard</h1>
           <p className="text-sm text-on-surface-variant font-[var(--font-mono)] mt-1">
-            Ringkasan rekrutmen, lowongan aktif, dan kandidat yang cocok.
+            Recruitment summary, active vacancies, and matching candidates.
           </p>
         </div>
 
@@ -256,11 +256,11 @@ export default function HRDashboard() {
             <div className="bg-surface border border-white/10 rounded-xl overflow-hidden shadow-xl animate-stagger stagger-delay-5">
               <div className="p-6 border-b border-white/10 flex justify-between items-center">
                 <h2 className="text-xl font-bold font-[var(--font-display)] text-primary">Active Job Openings</h2>
-                <span className="text-xs font-[var(--font-mono)] text-on-surface-variant">Total: {jobs.length} Lowongan</span>
+                <span className="text-xs font-[var(--font-mono)] text-on-surface-variant">Total: {jobs.length} Vacancies</span>
               </div>
 
               {jobs.length === 0 ? (
-                <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">Belum ada data lowongan pekerjaan.</div>
+                <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">No job vacancy data available yet.</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
@@ -290,7 +290,7 @@ export default function HRDashboard() {
                               </span>
                             </td>
                             <td className="p-4 font-mono font-bold text-primary">{job.minimum_skor ?? 0}</td>
-                            <td className="p-4 font-mono font-semibold text-on-surface">{job.applicant ?? 0} orang</td>
+                            <td className="p-4 font-mono font-semibold text-on-surface">{job.applicant ?? 0} people</td>
                             <td className="p-4">
                               <span className={`px-2.5 py-1 rounded-full text-xs font-bold font-mono ${
                                 matchCountForJob > 0
@@ -330,13 +330,13 @@ export default function HRDashboard() {
               </h2>
             </div>
             <p className="text-xs text-on-surface-variant font-[var(--font-mono)] mb-4">
-              Talent dengan skor ≥ minimum skor lowongan.
+              Talent with score ≥ minimum vacancy score.
             </p>
 
             {/* Job Filter Dropdown */}
             <div className="mb-5">
               <label className="block text-[10px] font-[var(--font-mono)] uppercase tracking-wider text-on-surface-variant mb-1.5">
-                Filter per Lowongan
+                Filter by Vacancy
               </label>
               <div className="relative">
                 <select
@@ -344,7 +344,7 @@ export default function HRDashboard() {
                   onChange={(e) => handleJobFilter(e.target.value)}
                   className="w-full bg-surface-container border border-white/10 rounded-lg px-3 py-2.5 text-sm text-on-surface font-[var(--font-body)] focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all appearance-none cursor-pointer pr-8"
                 >
-                  <option value="all">Semua Lowongan</option>
+                  <option value="all">All Vacancies</option>
                   {jobs
                     .filter((j) => j.status === "visible")
                     .map((job) => (
@@ -366,7 +366,7 @@ export default function HRDashboard() {
               <div className="p-8 flex flex-col items-center gap-3">
                 <div className="w-8 h-8 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
                 <p className="text-xs text-on-surface-variant font-[var(--font-mono)]">
-                  Memuat data matching...
+                  Loading matching data...
                 </p>
               </div>
             ) : displayedMatches.length === 0 ? (
@@ -374,8 +374,8 @@ export default function HRDashboard() {
                 <MaterialIcon name="search_off" className="text-4xl text-on-surface-variant/30 mb-3 block mx-auto" />
                 <p className="text-on-surface-variant font-[var(--font-mono)] text-xs">
                   {selectedJobFilter === "all"
-                    ? "Belum ada kandidat yang memenuhi skor minimum lowongan aktif."
-                    : "Belum ada kandidat yang cocok untuk lowongan ini."}
+                    ? "No candidate meets the minimum score of active vacancies yet."
+                    : "No matching candidate for this vacancy yet."}
                 </p>
               </div>
             ) : (
@@ -457,15 +457,15 @@ export default function HRDashboard() {
             {!matchingLoading && displayedMatches.length > 0 && (
               <div className="mt-4 pt-4 border-t border-white/5 text-center">
                 <p className="font-[var(--font-mono)] text-[11px] tracking-wider text-on-surface-variant">
-                  Menampilkan{" "}
+                  Showing{" "}
                   <span className="text-primary font-bold">
                     {displayedMatches.length}
                   </span>{" "}
-                  talent yang cocok
+                  matching talents
                   {selectedJobFilter !== "all" && (
                     <span>
                       {" "}
-                      untuk{" "}
+                      for{" "}
                       <span className="text-secondary font-bold">
                         {jobs.find((j) => j.id === selectedJobFilter)?.job_title}
                       </span>

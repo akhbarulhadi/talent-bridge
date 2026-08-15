@@ -59,7 +59,7 @@ export default function GameRouter({
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="animate-spin text-primary" size={40} />
           <p className="font-[var(--font-mono)] text-[13px] uppercase tracking-[0.05em] font-bold text-on-surface-variant">
-            Memuat skenario...
+            Loading scenario...
           </p>
         </div>
       </div>

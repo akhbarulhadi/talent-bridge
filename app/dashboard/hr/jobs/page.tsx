@@ -154,14 +154,14 @@ export default function HRJobsPage() {
             fetchJobs();
             showNotification(
               "success",
-              isEdit ? "Berhasil Mengubah Job" : "Berhasil Menambah Job",
-              isEdit ? `Lowongan "${formData.job_title}" telah diperbarui.` : `Lowongan "${formData.job_title}" berhasil ditambahkan.`
+              isEdit ? "Successfully Updated Job" : "Successfully Added Job",
+              isEdit ? `Vacancy "${formData.job_title}" has been updated.` : `Vacancy "${formData.job_title}" has been successfully added.`
             );
           } else {
-            showNotification("error", "Gagal Memproses Data", "Terjadi kesalahan pada server saat menyimpan lowongan.");
+            showNotification("error", "Failed to Process Data", "An error occurred on the server while saving the vacancy.");
           }
         } catch (error) {
-          showNotification("error", "Terjadi Kesalahan", "Gagal terhubung ke server.");
+          showNotification("error", "An Error Occurred", "Failed to connect to the server.");
         } finally {
           setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
         }
@@ -173,19 +173,19 @@ export default function HRJobsPage() {
   const confirmDelete = (job: Job) => {
     setConfirmDialog({
       isOpen: true,
-      title: "Konfirmasi Hapus Job",
-      message: `Apakah Anda yakin ingin menghapus lowongan kerja "${job.job_title}"? Tindakan ini tidak dapat dibatalkan.`,
+      title: "Confirm Delete Job",
+      message: `Are you sure you want to delete the job vacancy "${job.job_title}"? This action cannot be undone.`,
       onConfirm: async () => {
         try {
           const res = await fetch(`/api/jobs?id=${job.id}`, { method: "DELETE" });
           if (res.ok) {
             fetchJobs();
-            showNotification("success", "Berhasil Menghapus Job", `Lowongan "${job.job_title}" telah dihapus.`);
+            showNotification("success", "Successfully Deleted Job", `Vacancy "${job.job_title}" has been deleted.`);
           } else {
-            showNotification("error", "Gagal Menghapus", "Terjadi kesalahan saat menghapus data dari database.");
+            showNotification("error", "Failed to Delete", "An error occurred while deleting data from the database.");
           }
         } catch (error) {
-          showNotification("error", "Terjadi Kesalahan", "Gagal terhubung ke server.");
+          showNotification("error", "An Error Occurred", "Failed to connect to the server.");
         } finally {
           setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
         }
@@ -198,8 +198,8 @@ export default function HRJobsPage() {
     const nextStatus = job.status === "visible" ? "not visible" : "visible";
     setConfirmDialog({
       isOpen: true,
-      title: "Konfirmasi Ubah Status",
-      message: `Ubah status lowongan "${job.job_title}" menjadi "${nextStatus}"?`,
+      title: "Confirm Change Status",
+      message: `Change vacancy status "${job.job_title}" to "${nextStatus}"?`,
       onConfirm: async () => {
         try {
           const res = await fetch("/api/jobs", {
@@ -209,12 +209,12 @@ export default function HRJobsPage() {
           });
           if (res.ok) {
             fetchJobs();
-            showNotification("success", "Status Berhasil Diubah", `Lowongan "${job.job_title}" sekarang berstatus "${nextStatus}".`);
+            showNotification("success", "Status Successfully Changed", `Vacancy "${job.job_title}" is now "${nextStatus}".`);
           } else {
-            showNotification("error", "Gagal Mengubah Status", "Terjadi kesalahan saat memperbarui status lowongan.");
+            showNotification("error", "Failed to Change Status", "An error occurred while updating the vacancy status.");
           }
         } catch (error) {
-          showNotification("error", "Terjadi Kesalahan", "Gagal terhubung ke server.");
+          showNotification("error", "An Error Occurred", "Failed to connect to the server.");
         } finally {
           setConfirmDialog((prev) => ({ ...prev, isOpen: false }));
         }
@@ -243,7 +243,7 @@ export default function HRJobsPage() {
       {/* Mobile TopNavBar */}
       <nav className="md:hidden fixed top-0 w-full z-50 flex justify-between items-center px-gutter py-4 h-20 bg-surface/70 backdrop-blur-xl border-b border-white/10 shadow-2xl">
         <h1 className="font-[var(--font-display)] text-[32px] leading-[1.2] font-bold text-primary tracking-tighter">
-          SkillDock
+          Talent Bridge
         </h1>
         <button className="text-primary active:scale-95 transition-transform duration-200">
           <MaterialIcon name="menu" className="text-3xl" />
@@ -255,9 +255,9 @@ export default function HRJobsPage() {
         {/* Header & Button Add */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold font-[var(--font-display)] text-primary">Manajemen Jobs</h1>
+            <h1 className="text-3xl font-bold font-[var(--font-display)] text-primary">Job Management</h1>
             <p className="text-sm text-on-surface-variant font-[var(--font-mono)] mt-1">
-              Kelola daftar lowongan pekerjaan, lokasi, minimum skor, jumlah pelamar, dan status visibilitas.
+              Manage job vacancies, locations, minimum score, number of applicants, and visibility status.
             </p>
           </div>
           <button
@@ -265,16 +265,16 @@ export default function HRJobsPage() {
             className="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg font-bold text-sm shadow-md hover:opacity-90 transition-opacity"
           >
             <MaterialIcon name="add" />
-            <span>Tambah Job</span>
+            <span>Add Job</span>
           </button>
         </div>
 
         {/* List / Table Jobs */}
         <div className="bg-surface border border-white/10 rounded-xl overflow-hidden shadow-xl">
           {jobsLoading ? (
-            <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">Memuat data jobs...</div>
+            <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">Loading jobs data...</div>
           ) : jobs.length === 0 ? (
-            <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">Belum ada data lowongan pekerjaan.</div>
+            <div className="p-8 text-center text-on-surface-variant font-[var(--font-mono)]">No job vacancy data available yet.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
@@ -282,11 +282,11 @@ export default function HRJobsPage() {
                   <tr className="border-b border-white/10 bg-white/5 font-[var(--font-mono)] text-xs text-on-surface-variant uppercase tracking-wider">
                     <th className="p-4">Job Title</th>
                     <th className="p-4">Location</th>
-                    <th className="p-4">Min. Skor</th>
+                    <th className="p-4">Min. Score</th>
                     <th className="p-4">Applicant</th>
                     <th className="p-4">Status</th>
                     <th className="p-4">Created At</th>
-                    <th className="p-4 text-center">Aksi</th>
+                    <th className="p-4 text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5 text-sm">
@@ -308,7 +308,7 @@ export default function HRJobsPage() {
                         </span>
                       </td>
                       <td className="p-4 text-xs text-on-surface-variant font-[var(--font-mono)]">
-                        {new Date(job.created_at).toLocaleDateString("id-ID", {
+                        {new Date(job.created_at).toLocaleDateString("en-US", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",
@@ -318,7 +318,7 @@ export default function HRJobsPage() {
                         <div className="flex items-center justify-center gap-2">
                           <button
                             onClick={() => confirmToggleStatus(job)}
-                            title="Ganti Status"
+                            title="Change Status"
                             className="p-2 bg-surface-container hover:bg-white/10 text-on-surface rounded-md transition-colors"
                           >
                             <MaterialIcon name="visibility" className="text-base" />
@@ -332,7 +332,7 @@ export default function HRJobsPage() {
                           </button>
                           <button
                             onClick={() => confirmDelete(job)}
-                            title="Hapus Job"
+                            title="Delete Job"
                             className="p-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-md transition-colors"
                           >
                             <MaterialIcon name="delete" className="text-base" />
@@ -353,7 +353,7 @@ export default function HRJobsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-surface border border-white/10 w-full max-w-md rounded-2xl p-6 shadow-2xl">
             <h2 className="text-xl font-bold font-[var(--font-display)] text-primary mb-4">
-              {modalMode === "add" ? "Tambah Lowongan Baru" : "Edit Lowongan Pekerjaan"}
+              {modalMode === "add" ? "Add New Vacancy" : "Edit Job Vacancy"}
             </h2>
             <form onSubmit={handleFormSubmit} className="space-y-4">
               <div>
@@ -365,7 +365,7 @@ export default function HRJobsPage() {
                   required
                   value={formData.job_title}
                   onChange={(e) => setFormData({ ...formData, job_title: e.target.value })}
-                  placeholder="Contoh: Frontend Developer"
+                  placeholder="Example: Frontend Developer"
                   className="w-full bg-surface-container border border-white/10 rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:border-primary text-sm"
                 />
               </div>
@@ -378,14 +378,14 @@ export default function HRJobsPage() {
                   required
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="Contoh: Batam / Remote"
+                  placeholder="Example: Batam / Remote"
                   className="w-full bg-surface-container border border-white/10 rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:border-primary text-sm"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-[var(--font-mono)] uppercase text-on-surface-variant mb-1">
-                    Minimum Skor
+                    Minimum Score
                   </label>
                   <input
                     type="number"
@@ -394,13 +394,13 @@ export default function HRJobsPage() {
                     max="100"
                     value={formData.minimum_skor}
                     onChange={(e) => setFormData({ ...formData, minimum_skor: Number(e.target.value) })}
-                    placeholder="Contoh: 75"
+                    placeholder="Example: 75"
                     className="w-full bg-surface-container border border-white/10 rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:border-primary text-sm"
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-[var(--font-mono)] uppercase text-on-surface-variant mb-1">
-                    Applicant (Pelamar)
+                    Applicant
                   </label>
                   <input
                     type="number"
@@ -408,7 +408,7 @@ export default function HRJobsPage() {
                     min="0"
                     value={formData.applicant}
                     onChange={(e) => setFormData({ ...formData, applicant: Number(e.target.value) })}
-                    placeholder="Contoh: 12"
+                    placeholder="Example: 12"
                     className="w-full bg-surface-container border border-white/10 rounded-lg px-4 py-2.5 text-on-surface focus:outline-none focus:border-primary text-sm"
                   />
                 </div>
@@ -432,13 +432,13 @@ export default function HRJobsPage() {
                   onClick={() => setIsModalOpen(false)}
                   className="px-4 py-2 rounded-lg bg-surface-container hover:bg-white/10 text-on-surface-variant text-sm font-bold transition-colors"
                 >
-                  Batal
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-bold shadow hover:opacity-90 transition-opacity"
                 >
-                  Simpan
+                  Save
                 </button>
               </div>
             </form>
@@ -465,14 +465,14 @@ export default function HRJobsPage() {
                 onClick={() => setConfirmDialog((prev) => ({ ...prev, isOpen: false }))}
                 className="flex-1 px-4 py-2 rounded-lg bg-surface-container hover:bg-white/10 text-on-surface-variant text-sm font-bold transition-colors"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
                 onClick={confirmDialog.onConfirm}
                 className="flex-1 px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-bold shadow hover:opacity-90 transition-opacity"
               >
-                Ya, Lanjutkan
+                Yes, Continue
               </button>
             </div>
           </div>

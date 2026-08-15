@@ -89,7 +89,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       if (!scenario.start_problem_statement_id) {
         set({
           error:
-            "Scenario ini belum memiliki titik awal (start_problem_statement_id).",
+            "This scenario does not have a starting point yet (start_problem_statement_id).",
           isLoading: false,
         });
         return;
@@ -192,7 +192,7 @@ export const useGameStore = create<GameState>((set, get) => ({
           console.error("[GameStore] ❌ Failed to save score:", error);
           set({ 
             isSavingScore: false, 
-            error: "Skor tidak dapat disimpan. Silakan coba lagi." 
+            error: "Score cannot be saved. Please try again." 
           });
         }
       } else if (scoreSaved) {

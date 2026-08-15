@@ -46,10 +46,10 @@ export default function GameCompleted({
           <Trophy size={26} />
         </div>
         <p className="font-[var(--font-mono)] text-[11px] uppercase tracking-[0.05em] font-bold text-outline-variant mb-1">
-          Simulasi Selesai
+          Simulation Completed
         </p>
         <h1 className="font-[var(--font-display)] text-[24px] font-bold text-on-surface mb-3">
-          {scenarioTitle ?? "Skenario"}
+          {scenarioTitle ?? "Scenario"}
         </h1>
         <div className="font-[var(--font-mono)] text-[32px] font-bold text-primary">
           {totalScore > 0 ? `+${totalScore}` : totalScore}
@@ -65,7 +65,7 @@ export default function GameCompleted({
               <>
                 <Loader2 size={16} className="animate-spin text-primary" />
                 <span className="font-[var(--font-body)] text-[13px] text-on-surface-variant">
-                  Menyimpan skor...
+                  Saving score...
                 </span>
               </>
             )}
@@ -73,7 +73,7 @@ export default function GameCompleted({
               <>
                 <CheckCircle size={16} className="text-green-500" />
                 <span className="font-[var(--font-body)] text-[13px] text-green-500">
-                  Skor berhasil disimpan ke profil
+                  Score successfully saved to profile
                 </span>
               </>
             )}
@@ -107,7 +107,7 @@ export default function GameCompleted({
                       {index + 1}.
                     </span>
                     <span className="font-[var(--font-body)] text-[13px] text-on-surface truncate">
-                      {entry.decisionTitle ?? "Keputusan"}
+                      {entry.decisionTitle ?? "Decision"}
                     </span>
                   </div>
                   <span
@@ -128,14 +128,14 @@ export default function GameCompleted({
           className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-white/10 px-4 py-2.5 font-[var(--font-mono)] text-[12px] uppercase tracking-[0.05em] font-bold text-on-surface-variant hover:text-on-surface hover:border-white/20 transition-colors"
         >
           <ArrowLeft size={15} />
-          Kembali
+          Back
         </button>
         <button
           onClick={onRestart}
           className="btn-primary-gradient flex-1 flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 font-[var(--font-mono)] text-[12px] uppercase tracking-[0.05em] font-bold text-on-primary hover:scale-[1.02] active:scale-95 transition-all"
         >
           <RotateCcw size={15} />
-          Ulangi
+          Retry
         </button>
       </div>
     </div>
