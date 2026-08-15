@@ -1,4 +1,8 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import MaterialIcon from "./MaterialIcon";
+import CVUploadModal from "./CVUploadModal";
 
 interface TopNavBarProps {
   variant?: "talent" | "hr";
@@ -7,15 +11,41 @@ interface TopNavBarProps {
 const talentNavLinks = [
   { label: "Dashboard", href: "/dashboard/talent", active: true },
   { label: "Simulation", href: "/dashboard/talent/simulation" },
-  { label: "Upload CV", href: "#" },
 ];
 
 export default function TopNavBar({ variant = "talent" }: TopNavBarProps) {
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const navLinks = variant === "talent" ? talentNavLinks : [];
 
+  const handleNavClick = (link: any) => {
+    if (link.href !== "#") {
+      window.location.href = link.href;
+    }
+  };
+
+  const handleUploadSuccess = (cvData: any) => {
+    console.log('CV uploaded successfully:', cvData);
+    // Dispatch event to refresh CV status in other components
+    window.dispatchEvent(new CustomEvent('cv-status-updated', { detail: cvData }));
+  };
+
+  // Listen for CV upload requests from other components
+  useEffect(() => {
+    const handleOpenUpload = () => {
+      setIsUploadModalOpen(true);
+    };
+
+    window.addEventListener('open-cv-upload', handleOpenUpload);
+    
+    return () => {
+      window.removeEventListener('open-cv-upload', handleOpenUpload);
+    };
+  }, []);
+
   return (
-    <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-gutter py-4 h-20 bg-surface/70 backdrop-blur-xl border-b border-white/10 shadow-2xl">
-      <div className="flex items-center gap-8">
+    <>
+      <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-gutter py-4 h-20 bg-surface/70 backdrop-blur-xl border-b border-white/10 shadow-2xl">
+        <div className="flex items-center gap-8">
         {/* Logo */}
         <span className="font-[var(--font-display)] text-[32px] md:text-[48px] font-bold text-primary tracking-tighter leading-none">
           SkillDock
@@ -26,21 +56,21 @@ export default function TopNavBar({ variant = "talent" }: TopNavBarProps) {
           <div className="hidden md:flex items-center gap-6 mt-2">
             {navLinks.map((link) =>
               link.active ? (
-                <a
+                <button
                   key={link.label}
+                  onClick={() => handleNavClick(link)}
                   className="text-primary font-bold border-b-2 border-primary pb-1 font-[var(--font-mono)] text-[12px] uppercase tracking-[0.05em] leading-none hover:bg-white/5 transition-all duration-300 active:scale-95"
-                  href={link.href}
                 >
                   {link.label}
-                </a>
+                </button>
               ) : (
-                <a
+                <button
                   key={link.label}
+                  onClick={() => handleNavClick(link)}
                   className="text-on-surface-variant font-medium hover:text-on-surface font-[var(--font-mono)] text-[12px] uppercase tracking-[0.05em] leading-none hover:bg-white/5 transition-all duration-300 active:scale-95 pb-1"
-                  href={link.href}
                 >
                   {link.label}
-                </a>
+                </button>
               )
             )}
           </div>
@@ -48,6 +78,15 @@ export default function TopNavBar({ variant = "talent" }: TopNavBarProps) {
       </div>
 
       <div className="flex items-center gap-4">
+        {variant === "talent" && (
+          <button
+            onClick={() => setIsUploadModalOpen(true)}
+            className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-primary to-secondary text-on-primary rounded-xl font-[var(--font-mono)] text-[12px] uppercase tracking-[0.05em] font-bold shadow-[0_0_15px_rgba(0,0,0,0.1)] hover:shadow-[0_0_20px_rgba(0,0,0,0.2)] hover:scale-[1.02] active:scale-95 transition-all duration-300"
+          >
+            <MaterialIcon name="upload" className="text-[18px]" />
+            Upload CV
+          </button>
+        )}
         <button className="text-primary hover:bg-white/5 p-2 rounded-full transition-colors">
           <MaterialIcon name="notifications" />
         </button>
@@ -63,6 +102,15 @@ export default function TopNavBar({ variant = "talent" }: TopNavBarProps) {
           />
         </div>
       </div>
-    </nav>
+
+      </nav>
+
+      {/* CV Upload Modal */}
+      <CVUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onUploadSuccess={handleUploadSuccess}
+      />
+    </>
   );
 }

@@ -1,19 +1,22 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import MaterialIcon from "./MaterialIcon";
 
 const navLinks = [
-  { icon: "grid_view", label: "Home", active: true },
-  { icon: "trending_up", label: "Growth" },
-  { icon: "groups", label: "Network" },
-  { icon: "mail", label: "Inbox" },
-  { icon: "monitoring", label: "Analytics" },
+  { icon: "grid_view", label: "Home", href: "/dashboard/talent" },
+  { icon: "groups", label: "Network", href: "/dashboard/talent/network" },
+  { icon: "mail", label: "Inbox", href: "/dashboard/talent/inbox" },
 ];
 
 const footerLinks = [
-  { icon: "help", label: "Support" },
-  { icon: "logout", label: "Log Out" },
+  { icon: "help", label: "Support", href: "/support" },
+  { icon: "logout", label: "Log Out", href: "/logout" },
 ];
 
 export default function SideNavTalent() {
+  const pathname = usePathname();
   return (
     <aside className="hidden lg:flex flex-col w-72 h-screen fixed left-0 top-0 z-40 py-8 bg-surface-container-low/70 backdrop-blur-md border-r border-white/10 shadow-xl">
       <div className="flex flex-col h-full mt-20 px-4">
@@ -43,40 +46,41 @@ export default function SideNavTalent() {
 
         {/* Nav Links */}
         <nav className="flex-1 space-y-2">
-          {navLinks.map((link) =>
-            link.active ? (
-              <a
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return isActive ? (
+              <Link
                 key={link.label}
+                href={link.href}
                 className="bg-primary/20 text-primary border-r-4 border-primary px-6 py-3 flex items-center gap-3 font-[var(--font-body)] text-[16px] leading-[1.5] hover:bg-white/5 transition-all duration-200 translate-x-1 rounded-l-lg"
-                href="#"
               >
                 <MaterialIcon name={link.icon} />
                 {link.label}
-              </a>
+              </Link>
             ) : (
-              <a
+              <Link
                 key={link.label}
+                href={link.href}
                 className="text-on-surface-variant hover:text-on-surface px-6 py-3 flex items-center gap-3 font-[var(--font-body)] text-[16px] leading-[1.5] hover:bg-white/5 transition-all duration-200 rounded-l-lg"
-                href="#"
               >
                 <MaterialIcon name={link.icon} />
                 {link.label}
-              </a>
-            )
-          )}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Footer Links */}
         <div className="mt-auto space-y-2 pt-8 border-t border-white/10">
           {footerLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
+              href={link.href}
               className="text-on-surface-variant hover:text-on-surface px-6 py-3 flex items-center gap-3 font-[var(--font-body)] text-[16px] leading-[1.5] hover:bg-white/5 transition-all duration-200 rounded-lg"
-              href="#"
             >
               <MaterialIcon name={link.icon} />
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
       </div>

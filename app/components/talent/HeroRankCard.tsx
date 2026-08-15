@@ -1,25 +1,28 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import MaterialIcon from "../ui/MaterialIcon";
+import { useEffect, useState } from "react";
+import { getUserScore } from "@/app/services/game/profile.service";
 
 export default function HeroRankCard() {
-  const xpBarRef = useRef<HTMLDivElement>(null);
-  const sparkleRef = useRef<HTMLDivElement>(null);
+  const [email, setEmail] = useState<string>("");
+  const [score, setScore] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Trigger XP bar animation after mount
-    const timer = setTimeout(() => {
-      if (xpBarRef.current) {
-        xpBarRef.current.style.width = "75%";
+    // Fetch user email and score
+    const fetchUserData = async () => {
+      try {
+        const data = await getUserScore();
+        setEmail(data.email);
+        setScore(data.score);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      } finally {
+        setLoading(false);
       }
-      if (sparkleRef.current) {
-        sparkleRef.current.style.left = "75%";
-        sparkleRef.current.style.opacity = "0.2";
-      }
-    }, 500);
+    };
 
-    return () => clearTimeout(timer);
+    fetchUserData();
   }, []);
 
   return (
@@ -38,49 +41,26 @@ export default function HeroRankCard() {
           </div>
 
           <div>
-            {/* LCP Element — name is likely LCP text */}
-            <h1 className="font-[var(--font-display)] text-[32px] md:text-[48px] leading-[1.1] tracking-[-0.02em] font-bold text-on-surface mb-1">
-              Alex Rivera
-            </h1>
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="font-[var(--font-mono)] text-[14px] leading-[1.2] tracking-[0.02em] font-medium text-secondary bg-secondary/10 px-3 py-1 rounded-full border border-secondary/20">
-                Grade: Gold III
-              </span>
-              <div className="flex items-center gap-1 text-error bg-error/10 px-3 py-1 rounded-full border border-error/20">
-                <MaterialIcon
-                  name="local_fire_department"
-                  filled
-                  size="16px"
-                />
-                <span className="font-[var(--font-mono)] text-[14px] leading-[1.2] tracking-[0.02em] font-bold">
-                  14 Day Streak
+            {/* Display Email */}
+            {loading ? (
+              <div className="h-12 bg-surface-container-low/50 rounded animate-pulse w-64 mb-2" />
+            ) : (
+              <h1 className="font-[var(--font-display)] text-[32px] md:text-[48px] leading-[1.1] tracking-[-0.02em] font-bold text-on-surface mb-2">
+                {email || "User"}
+              </h1>
+            )}
+            
+            {/* Display Score */}
+            {loading ? (
+              <div className="h-8 bg-surface-container-low/50 rounded-full w-40 animate-pulse" />
+            ) : (
+              <div className="flex items-center gap-2">
+                <span className="font-[var(--font-mono)] text-[18px] leading-[1.2] tracking-[0.02em] font-bold text-secondary bg-secondary/10 px-4 py-2 rounded-full border border-secondary/20">
+                  Score: {score.toLocaleString()}
                 </span>
               </div>
-            </div>
+            )}
           </div>
-        </div>
-
-        {/* XP Progress Area */}
-        <div className="w-full md:w-1/3 flex flex-col gap-2">
-          <div className="flex justify-between font-[var(--font-mono)] text-[12px] leading-none tracking-[0.05em] font-bold uppercase text-on-surface-variant">
-            <span>Level Progress</span>
-            <span className="text-secondary">75%</span>
-          </div>
-          <div className="h-4 bg-surface-container-lowest rounded-full border border-white/5 overflow-hidden relative">
-            {/* XP bar fill — animated via useEffect */}
-            <div
-              ref={xpBarRef}
-              className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary to-secondary w-0 rounded-full shadow-[0_0_10px_rgba(255,185,95,0.5)] transition-[width] duration-[1.5s] ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-            />
-            {/* Sparkle highlight */}
-            <div
-              ref={sparkleRef}
-              className="absolute top-0 h-full w-6 bg-white/40 blur-[3px] left-0 transition-all duration-[1.5s] ease-out"
-            />
-          </div>
-          <p className="font-[var(--font-mono)] text-[14px] leading-[1.2] tracking-[0.02em] font-medium text-xs text-outline-variant text-right mt-1">
-            250 XP to Platinum
-          </p>
         </div>
       </div>
     </div>

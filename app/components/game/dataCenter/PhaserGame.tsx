@@ -11,10 +11,8 @@ export default function PhaserGame() {
     let destroyed = false;
 
     (async () => {
-      const [{ default: PhaserLib }, { default: DataCenterScene }] = await Promise.all([
-        import("phaser"),
-        import("./phaser/DataCenterScene"),
-      ]);
+      const [{ default: PhaserLib }, { default: DataCenterScene }] =
+        await Promise.all([import("phaser"), import("./DataCenterScene")]);
 
       if (destroyed || !containerRef.current) return;
 

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -7,51 +7,66 @@ import { createClient } from "@/utils/supabase/client"; // Sesuaikan path jika b
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const supabase = createClient();
+    try {
+      const supabase = createClient();
 
-    // 1. Proses autentikasi email & password
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+      // 1. Proses autentikasi email & password
+      const { data: authData, error: authError } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-    if (authError) {
-      setError(authError.message);
-      setLoading(false);
-      return;
-    }
-
-    // 2. Jika berhasil login, cek role user di tabel profiles
-    if (authData.user) {
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', authData.user.id)
-        .single();
-
-      if (profileError) {
-        setError("Gagal mengambil data profil pengguna.");
+      if (authError) {
+        if (authError.name === "AuthRetryableFetchError") {
+          setError(
+            "Tidak dapat terhubung ke server autentikasi. Periksa koneksi internet, VPN/proxy, atau ekstensi browser (ad-blocker) Anda, lalu coba lagi.",
+          );
+        } else {
+          setError(authError.message);
+        }
         setLoading(false);
         return;
       }
 
-      // 3. Redirect berdasarkan role
-      if (profileData.role === 'hr') {
-        router.push('/dashboard/hr');
-      } else {
-        router.push('/dashboard/talent');
+      // 2. Jika berhasil login, cek role user di tabel profiles
+      if (authData.user) {
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", authData.user.id)
+          .single();
+
+        if (profileError) {
+          setError("Gagal mengambil data profil pengguna.");
+          setLoading(false);
+          return;
+        }
+
+        // 3. Redirect berdasarkan role
+        if (profileData.role === "hr") {
+          router.push("/dashboard/hr");
+        } else {
+          router.push("/dashboard/talent");
+        }
+        router.refresh();
       }
-      router.refresh();
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(
+        "Gagal terhubung ke server. Pastikan koneksi internet Anda stabil, lalu coba lagi.",
+      );
+      setLoading(false);
     }
   };
 
@@ -59,7 +74,10 @@ const handleSubmit = async (e: React.FormEvent) => {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
-          <Link href="/" className="text-3xl font-extrabold text-blue-600 tracking-tight hover:text-blue-700 transition-colors">
+          <Link
+            href="/"
+            className="text-3xl font-extrabold text-blue-600 tracking-tight hover:text-blue-700 transition-colors"
+          >
             Talent Bridge
           </Link>
           <h2 className="mt-6 text-center text-2xl font-bold text-gray-900">
@@ -70,7 +88,6 @@ const handleSubmit = async (e: React.FormEvent) => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-xl sm:rounded-xl sm:px-10 border border-gray-100">
-          
           {/* Tampilkan pesan error jika ada */}
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
@@ -80,7 +97,10 @@ const handleSubmit = async (e: React.FormEvent) => {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Alamat Email
               </label>
               <div className="mt-1">
@@ -100,7 +120,10 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password
               </label>
               <div className="mt-1">
@@ -125,7 +148,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 disabled={loading}
                 className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-70"
               >
-                {loading ? 'Memproses...' : 'Masuk'}
+                {loading ? "Memproses..." : "Masuk"}
               </button>
             </div>
           </form>
